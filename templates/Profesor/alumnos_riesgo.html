@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Alumnos en Riesgo de Deserción</h2>
+    <a href="{{ url_for('profesor_dashboard') }}" class="btn btn-secondary">Volver al Inicio</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if alumnos %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Correo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alumno in alumnos %}
+                    <tr>
+                        <td>{{ alumno.matricula }}</td>
+                        <td>{{ alumno.nombre }}</td>
+                        <td>{{ alumno.apellidos }}</td>
+                        <td><a href="mailto:{{ alumno.correo }}">{{ alumno.correo }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <div class="alert alert-success">No hay alumnos marcados en riesgo actualmente.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

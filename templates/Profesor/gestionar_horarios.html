@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestionar Horarios de Materias</h2>
+    <a href="{{ url_for('profesor_dashboard') }}" class="btn btn-secondary">Volver al Inicio</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if materias %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Materia</th>
+                        <th>Horario Actual</th>
+                        <th>Actualizar Horario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for materia in materias %}
+                    <tr>
+                        <td class="fw-bold">{{ materia.nombre_materia }}</td>
+                        <td><span class="badge bg-info text-dark">{{ materia.horario or 'Sin asignar' }}</span></td>
+                        <td>
+                            <form method="POST" class="d-flex gap-2">
+                                <input type="hidden" name="id_materia" value="{{ materia.id_materia }}">
+                                <input type="text" name="horario" class="form-control form-control-sm" placeholder="Ej: Lun-Mie 10:00-12:00" required value="{{ materia.horario or '' }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <div class="alert alert-warning">No tienes materias asignadas.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

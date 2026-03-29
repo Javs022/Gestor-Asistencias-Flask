@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Mis Asesorías Registradas</h2>
+    <a href="{{ url_for('estudiante_dashboard') }}" class="btn btn-secondary">Volver al Inicio</a>
+</div>
+
+<div class="row">
+    {% for asesoria in asesorias %}
+    <div class="col-md-6 mb-3">
+        <div class="card border-success h-100">
+            <div class="card-header bg-success text-white">
+                Registrado
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ asesoria.nombre_materia }}</h5>
+                <p class="card-text">
+                    <strong>Profesor:</strong> {{ asesoria.nombre }} {{ asesoria.apellidos }}<br>
+                    <strong>Horario:</strong> {{ asesoria.horario }}
+                </p>
+                <a href="{{ url_for('cancelar_asesoria', id_registro=asesoria.id_registro) }}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Estás seguro de cancelar esta asesoría?');">
+                    Cancelar Registro
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">No te has registrado a ninguna asesoría todavía. <a href="{{ url_for('estudiante_materias') }}">Ver materias disponibles</a>.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

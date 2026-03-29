@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4 justify-content-center">
+    <div class="col-md-10">
+        <h2 class="mb-4 text-center">Panel del Estudiante</h2>
+        
+        <div class="card p-4 shadow-sm mb-4">
+            <h4 class="mb-3">Bienvenido, {{ session.nombre }} {{ session.apellidos }}</h4>
+            <p class="lead text-muted">Aquí puedes explorar los profesores, registrarte a sus asesorías y ver tus notificaciones.</p>
+        </div>
+
+        <h4 class="mb-3">Notificaciones</h4>
+        {% if alertas %}
+            <div class="row">
+                {% for alerta in alertas %}
+                <div class="col-12 mb-3">
+                    <div class="card border-warning shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">
+                                Alerta del profesor {{ alerta.nombre }} {{ alerta.apellidos }}:
+                            </h5>
+                            <p class="card-text fs-5">{{ alerta.mensaje }}</p>
+                            <p class="card-text text-end"><small class="text-muted">Enviado: {{ alerta.fecha_envio }}</small></p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info shadow-sm">No tienes notificaciones nuevas.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

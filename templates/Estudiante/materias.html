@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Materias Disponibles para Asesoría</h2>
+    <a href="{{ url_for('estudiante_dashboard') }}" class="btn btn-secondary">Volver al Inicio</a>
+</div>
+
+<div class="row">
+    {% for materia in materias %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ materia.nombre_materia }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Prof. {{ materia.nombre }} {{ materia.apellidos }}</h6>
+                <p class="card-text mt-3">
+                    <strong>Horario:</strong><br>
+                    {{ materia.horario or 'Por definir' }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <a href="{{ url_for('registrar_asesoria', id_materia=materia.id_materia) }}" class="btn btn-outline-primary w-100">
+                    Registrarme
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-warning">No hay materias disponibles en este momento.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

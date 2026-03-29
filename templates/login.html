@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-5 justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 shadow-sm">
+            <h3 class="text-center mb-4">
+                Iniciar Sesión - 
+                <span class="text-muted">{% if user_type == 'student' %}Estudiante{% else %}Profesor{% endif %}</span>
+            </h3>
+            
+            <form method="POST" action="{{ url_for('login', user_type=user_type) }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label fw-bold">Usuario</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Ingresa tu usuario" required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-bold">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-accent fs-5">Entrar</button>
+                </div>
+                <div class="text-center mt-2">
+                    <a href="{{ url_for('opciones_cuenta') }}" class="text-secondary text-decoration-none">← Regresar a opciones</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
