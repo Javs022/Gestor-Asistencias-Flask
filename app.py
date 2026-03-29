@@ -31,10 +31,18 @@ def conectar_bd():
 
 @app.route('/')
 def index():
+    """
+    Ruta principal de la aplicación.
+    Muestra la página de inicio (landing page).
+    """
     return render_template('index.html')
 
 @app.route('/opciones')
 def opciones_cuenta():
+    """
+    Muestra la página con las opciones para iniciar sesión o registrarse.
+    Si el usuario ya tiene una sesión activa, lo redirige automáticamente a su panel correspondiente.
+    """
     # Si ya hay sesión, redirigir al dashboard correspondiente
     if 'user_id' in session:
         if session['user_type'] == 'student':
@@ -45,12 +53,21 @@ def opciones_cuenta():
 
 @app.route('/logout')
 def logout():
+    """
+    Cierra la sesión del usuario actual eliminando los datos de la sesión
+    y lo redirige a la página principal.
+    """
     session.clear()
     return redirect(url_for('index'))
 
 # --- REGISTRO (Solo Estudiantes) ---
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
+    """
+    Maneja el registro de nuevos estudiantes.
+    Por GET: Muestra el formulario de registro.
+    Por POST: Recibe los datos, los valida y crea un nuevo registro en la base de datos.
+    """
     if request.method == 'POST':
         usuario = request.form['username']
         contrasena = request.form['password']
@@ -83,6 +100,12 @@ def registro():
 
 @app.route('/login/<user_type>', methods=['GET', 'POST'])
 def login(user_type):
+    """
+    Maneja el inicio de sesión para estudiantes o profesores.
+    :param user_type: Tipo de usuario que intenta ingresar ('student' o 'teacher').
+    Valida las credenciales contra la base de datos y, si son correctas,
+    inicia la sesión y redirige al panel correspondiente.
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -122,12 +145,20 @@ def login(user_type):
 
 @app.route('/profesor/inicio')
 def profesor_dashboard():
+    """
+    Muestra el panel principal (dashboard) del profesor.
+    Requiere que el usuario tenga sesión iniciada como 'teacher'.
+    """
     if 'user_id' not in session or session['user_type'] != 'teacher':
         return redirect(url_for('index'))
     return render_template('profesor/inicio.html')
 
 @app.route('/profesor/alumnos')
 def profesor_alumnos():
+    """
+    Muestra una lista de todos los alumnos que están marcados con riesgo de deserción
+    (en_riesgo = 1) en la base de datos.
+    """
     if 'user_id' not in session or session['user_type'] != 'teacher': return redirect(url_for('index'))
     conexion = conectar_bd()
     alumnos = []
@@ -140,6 +171,11 @@ def profesor_alumnos():
 
 @app.route('/profesor/horarios', methods=['GET', 'POST'])
 def profesor_horarios():
+    """
+    Permite al profesor ver y gestionar los horarios de las materias que imparte.
+    Por POST: Actualiza el horario de una materia específica en la base de datos.
+    Por GET: Muestra las materias asignadas al profesor logueado.
+    """
     if 'user_id' not in session or session['user_type'] != 'teacher': return redirect(url_for('index'))
     conexion = conectar_bd()
     if request.method == 'POST':
@@ -163,6 +199,10 @@ def profesor_horarios():
 
 @app.route('/profesor/asesorias')
 def profesor_asesorias():
+    """
+    Muestra la lista de alumnos que se han registrado para recibir asesorías
+    en cualquiera de las materias que imparte el profesor actual.
+    """
     if 'user_id' not in session or session['user_type'] != 'teacher': return redirect(url_for('index'))
     conexion = conectar_bd()
     alumnos = []
@@ -182,6 +222,12 @@ def profesor_asesorias():
 
 @app.route('/profesor/asistencia/<int:id_registro>/<int:estado>')
 def marcar_asistencia(id_registro, estado):
+    """
+    Registra la asistencia (o falta) de un alumno a una asesoría.
+    :param id_registro: ID de la asesoría registrada.
+    :param estado: 1 si asistió, 0 si faltó.
+    Si el alumno falta (estado 0), genera automáticamente una alerta para seguimiento.
+    """
     if 'user_id' not in session or session['user_type'] != 'teacher': return redirect(url_for('index'))
     conexion = conectar_bd()
     if conexion:
@@ -214,6 +260,10 @@ def marcar_asistencia(id_registro, estado):
 
 @app.route('/profesor/historial_asistencias')
 def profesor_historial():
+    """
+    Muestra el historial completo de las asistencias registradas por el profesor
+    para todas sus materias.
+    """
     if 'user_id' not in session or session['user_type'] != 'teacher': return redirect(url_for('index'))
     conexion = conectar_bd()
     asistencias = []
@@ -237,6 +287,10 @@ def profesor_historial():
 
 @app.route('/estudiante/inicio')
 def estudiante_dashboard():
+    """
+    Muestra el panel principal del estudiante, incluyendo un listado de las alertas
+    o notificaciones que los profesores le han enviado (por inasistencias, etc.).
+    """
     if 'user_id' not in session or session['user_type'] != 'student': return redirect(url_for('index'))
     conexion = conectar_bd()
     alertas = []
@@ -256,6 +310,10 @@ def estudiante_dashboard():
 
 @app.route('/estudiante/materias')
 def estudiante_materias():
+    """
+    Muestra la lista de todas las materias disponibles para solicitar asesorías,
+    junto con el profesor que imparte cada materia y sus horarios.
+    """
     if 'user_id' not in session or session['user_type'] != 'student': return redirect(url_for('index'))
     conexion = conectar_bd()
     materias = []
@@ -268,6 +326,11 @@ def estudiante_materias():
 
 @app.route('/estudiante/registrar/<int:id_materia>')
 def registrar_asesoria(id_materia):
+    """
+    Permite a un estudiante registrarse para recibir asesoría de una materia.
+    :param id_materia: El ID de la materia a la que desea inscribirse.
+    Verifica primero que el alumno no esté ya registrado para evitar duplicados.
+    """
     if 'user_id' not in session or session['user_type'] != 'student': return redirect(url_for('index'))
     conexion = conectar_bd()
     if conexion:
@@ -289,6 +352,9 @@ def registrar_asesoria(id_materia):
 
 @app.route('/estudiante/mis_asesorias')
 def estudiante_mis_asesorias():
+    """
+    Muestra un listado con las asesorías a las cuales el estudiante actual se ha registrado.
+    """
     if 'user_id' not in session or session['user_type'] != 'student': return redirect(url_for('index'))
     conexion = conectar_bd()
     asesorias = []
@@ -308,6 +374,10 @@ def estudiante_mis_asesorias():
 
 @app.route('/estudiante/cancelar/<int:id_registro>')
 def cancelar_asesoria(id_registro):
+    """
+    Permite a un estudiante cancelar su registro a una asesoría.
+    :param id_registro: ID del registro de asesoría que se va a eliminar.
+    """
     if 'user_id' not in session or session['user_type'] != 'student': return redirect(url_for('index'))
     conexion = conectar_bd()
     if conexion:
@@ -325,3 +395,4 @@ def cancelar_asesoria(id_registro):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
